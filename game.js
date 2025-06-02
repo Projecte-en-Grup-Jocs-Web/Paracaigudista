@@ -60,6 +60,11 @@ function preload() {
     this.graphics.fillRect(0, 0, 40, 20); // rectangle 40x20
     this.graphics.generateTexture('wind', 40, 20);
     this.graphics.clear();
+
+
+    //imatges
+    this.load.image('equilibri', 'Resources/CaigudaLliure.png');
+    this.load.image('paracaigudes', 'Resources/Paracaigudes.png');
 }
 
 function create() {
@@ -91,6 +96,10 @@ function create() {
     updateTimeBar();  // Dibuixar-la inicialment
     balanceBar = this.add.graphics();
     updateBalanceBar();
+
+    //imatges de les barres
+    this.add.image(config.width-80, config.height-380, 'equilibri').setScale(0.05);
+    this.add.image(config.width-80,config.height-80,'paracaigudes').setScale(0.025);
 }
 
 
