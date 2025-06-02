@@ -25,5 +25,11 @@ body {
 }
 /* Inicialment ocultem el canvas del joc */
 #game-container {
+    margin-top: 100px;
     display: none;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
+
+
