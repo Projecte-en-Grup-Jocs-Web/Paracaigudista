@@ -102,7 +102,6 @@ function create() {
     balanceBar = this.add.graphics();
     updateBalanceBar();
 
-<<<<<<< HEAD
     // Botó de pausa dins del joc
     pauseButtonPhaser = this.add.text(16, 16, '⏸️ Pausa', {
         fontSize: '20px',
@@ -112,10 +111,15 @@ function create() {
     }).setInteractive();
 
     pauseButtonPhaser.on('pointerdown', () => {
-        if (!isPaused) {
-            isPaused = true;
-            showPauseMenu(this);
-        }
+    if (!isPaused) {
+        isPaused = true;
+        // Poso velocitat 0 a totes les rafegades i guardo la seva velocitat original
+        windGroup.getChildren().forEach(wind => {
+            wind.originalVelocityY = wind.body.velocity.y;  // guardo velocitat
+            wind.setVelocityY(0); // aturo moviment
+        });
+        showPauseMenu(this);
+    }
     });
 
 }
@@ -131,11 +135,9 @@ function update() {
     windGroup.getChildren().forEach(wind => {
         if (wind.y < -wind.displayHeight) wind.destroy();
     });
-=======
     //imatges de les barres
     this.add.image(config.width-80, config.height-380, 'equilibri').setScale(0.05);
     this.add.image(config.width-80,config.height-80,'paracaigudes').setScale(0.025);
->>>>>>> 921fdd36769e974df2962339a30e223d117a652c
 }
 
 function hitWind(player, wind) {
@@ -215,8 +217,15 @@ function showPauseMenu(scene) {
     }).setOrigin(0.5).setInteractive().setDepth(2);
 
     resumeButton.on('pointerdown', () => {
-        destroyPauseMenu();
-        isPaused = false;
+    // Restauro velocitat original
+    windGroup.getChildren().forEach(wind => {
+        if (wind.originalVelocityY !== undefined) {
+            wind.setVelocityY(wind.originalVelocityY);
+            delete wind.originalVelocityY; // ja no cal guardar-la
+        }
+    });
+    destroyPauseMenu();
+    isPaused = false;
     });
 
     exitButton = scene.add.text(config.width / 2, config.height / 2 + 30, '🔁 Sortir', {
