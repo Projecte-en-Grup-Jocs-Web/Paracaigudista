@@ -27,12 +27,17 @@ let timerText;   // text del temporitzador
 let gameTime = 0; 
 const winTime = 30;  // segons per guanyar
 let gameOver = false;
+let isPaused = false;
+let pauseOverlay;
+let resumeButton;
+let exitButton;
 //variables barra temps
 let timeBar;         // Gràfic de la barra
 let timeBarHeight = 300;  // Alçada inicial de la barra
 let timeBarMaxHeight = 300;
 let timeBarX = config.width - 60; // A la dreta
 let timeBarY = config.height - 350;
+let pauseButtonPhaser;
 //variables barra equilibri
 let balanceBar;
 let balanceBarHeight = 150;
@@ -91,9 +96,64 @@ function create() {
     updateTimeBar();  // Dibuixar-la inicialment
     balanceBar = this.add.graphics();
     updateBalanceBar();
+
+    // Botó de pausa dins del joc
+    pauseButtonPhaser = this.add.text(16, 16, '⏸️ Pausa', {
+        fontSize: '20px',
+        fill: '#000',
+        backgroundColor: '#ffcc00',
+        padding: { x: 10, y: 5 }
+    }).setInteractive();
+
+    pauseButtonPhaser.on('pointerdown', () => {
+        if (!isPaused) {
+            isPaused = true;
+            showPauseMenu(this);
+        }
+    });
+
+}
+function update() {
+    if (gameOver || isPaused) {
+        return; // Atura tota la lògica si està pausat o ha acabat el joc
+    }
+
+    player.setVelocityX(0);
+    if (cursors.left.isDown) player.setVelocityX(-300);
+    else if (cursors.right.isDown) player.setVelocityX(300);
+
+    windGroup.getChildren().forEach(wind => {
+        if (wind.y < -wind.displayHeight) wind.destroy();
+    });
 }
 
+function hitWind(player, wind) {
+    wind.destroy();
+    hits++;
+    updateBalanceBar();
+    if (hits >= maxHits) {
+        endGame(false, this);
+    }
+}
 
+function spawnWind() {
+    if (gameOver || isPaused) return; // No spawnejis si pausa o fi
+
+    let x = Phaser.Math.Between(50, config.width - 50);
+    let wind = windGroup.create(x, config.height + 20, 'wind');
+    wind.setVelocityY(-Phaser.Math.Between(150, 250));
+}
+
+function updateTimer() {
+    if (gameOver || isPaused) return; // No actualitzis si pausa o fi
+
+    gameTime++;
+    updateTimeBar();
+
+    if (gameTime >= winTime) {
+        endGame(true, this);
+    }
+}
 //funcions d'actualitzacions de barres
 function updateBalanceBar() {
     const remainingRatio = Math.max(0, (maxHits - hits) / maxHits);
@@ -117,62 +177,59 @@ function updateTimeBar() {
     timeBar.strokeRect(timeBarX, timeBarY, 20, timeBarMaxHeight);
 }
 
+function showPauseMessage(scene) {
+    const pauseText = scene.add.text(config.width / 2, config.height / 2, 'Joc en pausa\nFes clic per continuar', {
+        fontSize: '32px',
+        fill: '#000',
+        backgroundColor: '#ffffff',
+        padding: { x: 20, y: 10 },
+        align: 'center'
+    }).setOrigin(0.5).setDepth(1).setInteractive();
 
-
-function update() {
-    if (gameOver) {
-        return; // si el joc ja ha acabat, no fer res més
-    }
-    // Moviment horitzontal del jugador
-    player.setVelocityX(0);
-    if (cursors.left.isDown) {
-        player.setVelocityX(-300);
-    } else if (cursors.right.isDown) {
-        player.setVelocityX(300);
-    }
-
-    // Eliminar rafegades que ja hagin sortit de la pantalla per la part superior
-    windGroup.getChildren().forEach(function(wind) {
-        if (wind.y < -wind.displayHeight) {
-            wind.destroy();
-        }
+    pauseText.on('pointerdown', () => {
+        pauseText.destroy();
+        scene.scene.resume();
+        isPaused = false;
     });
 }
 
-function hitWind(player, wind) {
-    // Quan el jugador impacta una rafega
-    wind.destroy();    // eliminar rafega
-    hits++;
-    //hitText.setText('Equilibri: ' + (maxHits - hits));
-    if (hits >= maxHits) {
-        endGame(false, this);  // fi del joc (has perdut)
-    }
-    updateBalanceBar();
+function showPauseMenu(scene) {
+    pauseOverlay = scene.add.rectangle(config.width / 2, config.height / 2, config.width, config.height, 0x000000, 0.5).setDepth(1);
+
+    resumeButton = scene.add.text(config.width / 2, config.height / 2 - 30, '▶️ Reprendre', {
+        fontSize: '32px',
+        fill: '#ffffff',
+        backgroundColor: '#00aa00',
+        padding: { x: 20, y: 10 }
+    }).setOrigin(0.5).setInteractive().setDepth(2);
+
+    resumeButton.on('pointerdown', () => {
+        destroyPauseMenu();
+        isPaused = false;
+    });
+
+    exitButton = scene.add.text(config.width / 2, config.height / 2 + 30, '🔁 Sortir', {
+        fontSize: '32px',
+        fill: '#ffffff',
+        backgroundColor: '#aa0000',
+        padding: { x: 20, y: 10 }
+    }).setOrigin(0.5).setInteractive().setDepth(2);
+
+    exitButton.on('pointerdown', () => {
+        window.location.href = "menu.html";
+    });
 }
 
-function spawnWind() {
-    // Crear rafega al fons amb posició horitzontal aleatòria
-    let x = Phaser.Math.Between(50, config.width - 50);
-    let wind = windGroup.create(x, config.height + 20, 'wind');
-    wind.setVelocityY(-Phaser.Math.Between(150, 250)); // moure cap amunt
-}
-
-function updateTimer() {
-    gameTime++;
-    //timerText.setText('Temps: ' + gameTime);  
-    if (gameTime >= winTime) {
-        endGame(true, this);   // has mantingut l'equilibri
-    }
-    updateTimeBar();
+function destroyPauseMenu() {
+    pauseOverlay.destroy();
+    resumeButton.destroy();
+    exitButton.destroy();
 }
 
 function endGame(won, scene) {
     gameOver = true;
-    const message = won ? 'Has desplegat el paracaigudes exitosamen' : "Has Perdut l'equilibri!";
-    // Mostrar missatge al centre de la pantalla
-    scene.add.text(config.width/2, config.height/2, message, 
-        { fontSize: '40px', fill: '#f00' }).setOrigin(0.5);
-    // Tornar al menú principal després de 3 segons
+    const message = won ? 'Has desplegat el paracaigudes exitosament!' : 'Has perdut l\'equilibri!';
+    scene.add.text(config.width / 2, config.height / 2, message, { fontSize: '40px', fill: '#f00' }).setOrigin(0.5);
     scene.time.delayedCall(3000, () => {
         window.location.reload();
     });
