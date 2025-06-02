@@ -27,6 +27,11 @@ let timerText;   // text del temporitzador
 let gameTime = 0; 
 const winTime = 60;  // segons per guanyar
 let gameOver = false;
+let timeBar;         // Gràfic de la barra
+let timeBarHeight = 300;  // Alçada inicial de la barra
+let timeBarMaxHeight = 300;
+let timeBarX = config.width - 30; // A la dreta
+let timeBarY = config.height - 350;
 
 // Aquesta funció es crida quan es fa clic al botó "Iniciar joc"
 function startGame() {
@@ -73,7 +78,24 @@ function create() {
 
     // Temporitzador per generar una nova rafega cada segon
     this.time.addEvent({ delay: 1000, callback: spawnWind, callbackScope: this, loop: true });
+
+    //BArra
+    timeBar = this.add.graphics();
+    updateTimeBar();  // Dibuixar-la inicialment
 }
+
+function updateTimeBar() {
+    const remainingRatio = Math.max(0, (winTime - gameTime) / winTime);
+    const currentHeight = remainingRatio * timeBarMaxHeight;
+
+    timeBar.clear();
+    timeBar.fillStyle(0x00aaff, 1);  // Blau clar
+    timeBar.fillRect(timeBarX, timeBarY + (timeBarMaxHeight - currentHeight), 20, currentHeight);
+    timeBar.lineStyle(2, 0x000000);
+    timeBar.strokeRect(timeBarX, timeBarY, 20, timeBarMaxHeight);
+}
+
+
 
 function update() {
     if (gameOver) {
@@ -118,6 +140,7 @@ function updateTimer() {
     if (gameTime >= winTime) {
         endGame(true, this);   // has sobreviscut 60s, has guanyat!
     }
+    updateTimeBar();
 }
 
 function endGame(won, scene) {
