@@ -25,12 +25,12 @@ const maxHits = 3;
 let hitText;     // text de la barra d'equilibri
 let timerText;   // text del temporitzador
 let gameTime = 0; 
-const winTime = 60;  // segons per guanyar
+const winTime = 30;  // segons per guanyar
 let gameOver = false;
 let timeBar;         // Gràfic de la barra
 let timeBarHeight = 300;  // Alçada inicial de la barra
 let timeBarMaxHeight = 300;
-let timeBarX = config.width - 30; // A la dreta
+let timeBarX = config.width - 60; // A la dreta
 let timeBarY = config.height - 350;
 
 // Aquesta funció es crida quan es fa clic al botó "Iniciar joc"
@@ -71,7 +71,7 @@ function create() {
 
     // Texts d'interfície: Equilibri i Temps
     hitText = this.add.text(16, 16, 'Equilibri: ' + (maxHits - hits), { fontSize: '20px', fill: '#000' });
-    timerText = this.add.text(600, 16, 'Temps: ' + gameTime, { fontSize: '20px', fill: '#000' });
+    //timerText = this.add.text(600, 16, 'Temps: ' + gameTime, { fontSize: '20px', fill: '#000' });
 
     // Temporitzador per augmentar el comptador cada segon
     this.time.addEvent({ delay: 1000, callback: updateTimer, callbackScope: this, loop: true });
@@ -136,16 +136,16 @@ function spawnWind() {
 
 function updateTimer() {
     gameTime++;
-    timerText.setText('Temps: ' + gameTime);
+    //timerText.setText('Temps: ' + gameTime);  
     if (gameTime >= winTime) {
-        endGame(true, this);   // has sobreviscut 60s, has guanyat!
+        endGame(true, this);   // has mantingut l'equilibri
     }
     updateTimeBar();
 }
 
 function endGame(won, scene) {
     gameOver = true;
-    const message = won ? 'Has guanyat!' : 'Has perdut!';
+    const message = won ? 'Has desplegat el paracaigudes exitosamen' : "Has Perdut l'equilibri!";
     // Mostrar missatge al centre de la pantalla
     scene.add.text(config.width/2, config.height/2, message, 
         { fontSize: '40px', fill: '#f00' }).setOrigin(0.5);
