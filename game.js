@@ -102,7 +102,6 @@ function create() {
     balanceBar = this.add.graphics();
     updateBalanceBar();
 
-<<<<<<< HEAD
     // Botó de pausa dins del joc
     pauseButtonPhaser = this.add.text(16, 16, '⏸️ Pausa', {
         fontSize: '20px',
@@ -131,11 +130,9 @@ function update() {
     windGroup.getChildren().forEach(wind => {
         if (wind.y < -wind.displayHeight) wind.destroy();
     });
-=======
     //imatges de les barres
     this.add.image(config.width-80, config.height-380, 'equilibri').setScale(0.05);
     this.add.image(config.width-80,config.height-80,'paracaigudes').setScale(0.025);
->>>>>>> 921fdd36769e974df2962339a30e223d117a652c
 }
 
 function hitWind(player, wind) {
