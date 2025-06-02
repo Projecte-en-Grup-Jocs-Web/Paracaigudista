@@ -27,11 +27,18 @@ let timerText;   // text del temporitzador
 let gameTime = 0; 
 const winTime = 30;  // segons per guanyar
 let gameOver = false;
+//variables barra temps
 let timeBar;         // Gràfic de la barra
 let timeBarHeight = 300;  // Alçada inicial de la barra
 let timeBarMaxHeight = 300;
 let timeBarX = config.width - 60; // A la dreta
 let timeBarY = config.height - 350;
+//variables barra equilibri
+let balanceBar;
+let balanceBarHeight = 150;
+let balanceBarMaxHeight = 150;
+let balanceBarX = config.width - 60;
+let balanceBarY = config.height - 350 - balanceBarHeight - 10;
 
 // Aquesta funció es crida quan es fa clic al botó "Iniciar joc"
 function startGame() {
@@ -70,7 +77,7 @@ function create() {
     this.physics.add.overlap(player, windGroup, hitWind, null, this);
 
     // Texts d'interfície: Equilibri i Temps
-    hitText = this.add.text(16, 16, 'Equilibri: ' + (maxHits - hits), { fontSize: '20px', fill: '#000' });
+    //hitText = this.add.text(16, 16, 'Equilibri: ' + (maxHits - hits), { fontSize: '20px', fill: '#000' });
     //timerText = this.add.text(600, 16, 'Temps: ' + gameTime, { fontSize: '20px', fill: '#000' });
 
     // Temporitzador per augmentar el comptador cada segon
@@ -79,9 +86,24 @@ function create() {
     // Temporitzador per generar una nova rafega cada segon
     this.time.addEvent({ delay: 1000, callback: spawnWind, callbackScope: this, loop: true });
 
-    //BArra
+    //BArres (altitud i equilibri)
     timeBar = this.add.graphics();
     updateTimeBar();  // Dibuixar-la inicialment
+    balanceBar = this.add.graphics();
+    updateBalanceBar();
+}
+
+
+//funcions d'actualitzacions de barres
+function updateBalanceBar() {
+    const remainingRatio = Math.max(0, (maxHits - hits) / maxHits);
+    const currentHeight = remainingRatio * balanceBarMaxHeight;
+
+    balanceBar.clear();
+    balanceBar.fillStyle(0xff5555, 1); // Vermell clar
+    balanceBar.fillRect(balanceBarX, balanceBarY + (balanceBarMaxHeight - currentHeight), 20, currentHeight);
+    balanceBar.lineStyle(2, 0x000000);
+    balanceBar.strokeRect(balanceBarX, balanceBarY, 20, balanceBarMaxHeight);
 }
 
 function updateTimeBar() {
@@ -121,10 +143,11 @@ function hitWind(player, wind) {
     // Quan el jugador impacta una rafega
     wind.destroy();    // eliminar rafega
     hits++;
-    hitText.setText('Equilibri: ' + (maxHits - hits));
+    //hitText.setText('Equilibri: ' + (maxHits - hits));
     if (hits >= maxHits) {
         endGame(false, this);  // fi del joc (has perdut)
     }
+    updateBalanceBar();
 }
 
 function spawnWind() {
