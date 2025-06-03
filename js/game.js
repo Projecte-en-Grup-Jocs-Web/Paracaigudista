@@ -244,7 +244,7 @@ function showPauseMenu(scene) {
     }).setOrigin(0.5).setInteractive().setDepth(2);
 
     exitButton.on('pointerdown', () => {
-        window.location.href = "menu.html";
+        window.location.href = "index.html";
     });
 }
 

@@ -5,5 +5,5 @@ document.getElementById('BotoJugar').addEventListener('click', function() {
     });
 
 document.getElementById('BotoOpcions').addEventListener('click', function() {
-        window.location.href = 'opcions.html';
+        window.location.href = 'html/opcions.html';
     });
