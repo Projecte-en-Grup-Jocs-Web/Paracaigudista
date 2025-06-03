@@ -1,9 +1,9 @@
-document.getElementById('BotoJugar').addEventListener('click', function() {
-        document.getElementById('menu').style.display = 'none';
-        document.getElementById('game-container').style.display = 'block';
-        startGame();
-    });
+$('#BotoJugar').on('click', function () {
+  $('#menu').hide();
+  $('#game-container').show();
+  startGame();
+});
 
-document.getElementById('BotoOpcions').addEventListener('click', function() {
-        window.location.href = 'html/opcions.html';
-    });
+$('#BotoOpcions').on('click', function () {
+  window.location.href = 'html/opcions.html';
+});
