@@ -17,13 +17,35 @@ const config = {
     }
 };
 
+
+
+let winTime =60;
+let maxHits = 3;
+
+let opcionsGuardades = JSON.parse(localStorage.getItem('opcions')) || { difficulty: 'normal' };
+
+switch (opcionsGuardades.difficulty) {
+  case 'easy':
+    winTime = 30;
+    maxHits = 4;
+    break;
+  case 'hard':
+    winTime = 120;
+    maxHits = 2;
+    break;
+  case 'normal':
+  default:
+    winTime = 60;
+    maxHits = 3;
+    break;
+}
+
 let player;      // jugador
 let cursors;     // tecles
 let windGroup;   // grup d'obstacles (rafegades de vent)
 let hits = 0;    // impactes acumulats
 let keys;
 
-const maxHits = 3;
 
 
 let hitText;     // text de la barra d'equilibri
@@ -31,7 +53,6 @@ let timerText;   // text del temporitzador
 let gameTime = 0;
 
 
-const winTime = 30;  // segons per guanyar
 
 
 let gameOver = false;
