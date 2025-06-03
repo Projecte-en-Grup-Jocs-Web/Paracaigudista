@@ -129,11 +129,35 @@ function create() {
         showPauseMenu(this);
     }
     });
+    // Detecció de la tecla ESC
+    this.input.keyboard.on('keydown-ESC', () => {
+    if (gameOver) return;
+
+    if (!isPaused) {
+        isPaused = true;
+        windGroup.getChildren().forEach(wind => {
+            wind.originalVelocityY = wind.body.velocity.y;
+            wind.setVelocityY(0);
+        });
+        showPauseMenu(this);
+    } else {
+        // Si ja estava pausat, el reprenem
+        windGroup.getChildren().forEach(wind => {
+            if (wind.originalVelocityY !== undefined) {
+                wind.setVelocityY(wind.originalVelocityY);
+                delete wind.originalVelocityY;
+            }
+        });
+        destroyPauseMenu();
+        isPaused = false;
+    }
+    });
+
 
 }
 function update() {
     if (gameOver || isPaused) {
-        return; // Atura tota la lògica si està pausat o ha acabat el joc
+        return;
     }
 
     player.setVelocityX(0);
@@ -143,9 +167,9 @@ function update() {
     windGroup.getChildren().forEach(wind => {
         if (wind.y < -wind.displayHeight) wind.destroy();
     });
-    //imatges de les barres
+
     this.add.image(config.width-80, config.height-380, 'equilibri').setScale(0.05);
-    this.add.image(config.width-80,config.height-80,'paracaigudes').setScale(0.025);
+    this.add.image(config.width-80, config.height-80, 'paracaigudes').setScale(0.025);
 }
 
 function hitWind(player, wind) {
