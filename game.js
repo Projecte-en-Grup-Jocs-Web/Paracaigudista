@@ -21,11 +21,19 @@ let player;      // jugador
 let cursors;     // tecles
 let windGroup;   // grup d'obstacles (rafegades de vent)
 let hits = 0;    // impactes acumulats
+
+
 const maxHits = 3;
+
+
 let hitText;     // text de la barra d'equilibri
 let timerText;   // text del temporitzador
-let gameTime = 0; 
+let gameTime = 0;
+
+
 const winTime = 30;  // segons per guanyar
+
+
 let gameOver = false;
 let isPaused = false;
 let pauseOverlay;
