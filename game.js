@@ -111,10 +111,15 @@ function create() {
     }).setInteractive();
 
     pauseButtonPhaser.on('pointerdown', () => {
-        if (!isPaused) {
-            isPaused = true;
-            showPauseMenu(this);
-        }
+    if (!isPaused) {
+        isPaused = true;
+        // Poso velocitat 0 a totes les rafegades i guardo la seva velocitat original
+        windGroup.getChildren().forEach(wind => {
+            wind.originalVelocityY = wind.body.velocity.y;  // guardo velocitat
+            wind.setVelocityY(0); // aturo moviment
+        });
+        showPauseMenu(this);
+    }
     });
 
 }
@@ -212,8 +217,15 @@ function showPauseMenu(scene) {
     }).setOrigin(0.5).setInteractive().setDepth(2);
 
     resumeButton.on('pointerdown', () => {
-        destroyPauseMenu();
-        isPaused = false;
+    // Restauro velocitat original
+    windGroup.getChildren().forEach(wind => {
+        if (wind.originalVelocityY !== undefined) {
+            wind.setVelocityY(wind.originalVelocityY);
+            delete wind.originalVelocityY; // ja no cal guardar-la
+        }
+    });
+    destroyPauseMenu();
+    isPaused = false;
     });
 
     exitButton = scene.add.text(config.width / 2, config.height / 2 + 30, '🔁 Sortir', {
