@@ -21,7 +21,7 @@ let player;      // jugador
 let cursors;     // tecles
 let windGroup;   // grup d'obstacles (rafegades de vent)
 let hits = 0;    // impactes acumulats
-
+let keys;
 
 const maxHits = 3;
 
@@ -81,61 +81,57 @@ function preload() {
 }
 
 function create() {
-    // Crear jugador amb física i col·lisió amb límits del món
+    // Crear jugador
     player = this.physics.add.sprite(config.width / 2, 100, 'player');
     player.setCollideWorldBounds(true);
 
-    // Configurar tecles d'entrada (esquerra/dreta)
+    // Tecles: fletxes + A/D
     cursors = this.input.keyboard.createCursorKeys();
+    keys = this.input.keyboard.addKeys({
+        left: Phaser.Input.Keyboard.KeyCodes.A,
+        right: Phaser.Input.Keyboard.KeyCodes.D
+    });
 
-    // Crear grup per a les rafegades de vent
+    // Grup d'obstacles (rafegues de vent)
     windGroup = this.physics.add.group();
 
-    // Detectar col·lisions entre jugador i rafegades
+    // Col·lisió entre jugador i obstacles
     this.physics.add.overlap(player, windGroup, hitWind, null, this);
 
-    // Texts d'interfície: Equilibri i Temps
-    //hitText = this.add.text(16, 16, 'Equilibri: ' + (maxHits - hits), { fontSize: '20px', fill: '#000' });
-    //timerText = this.add.text(600, 16, 'Temps: ' + gameTime, { fontSize: '20px', fill: '#000' });
-
-    // Temporitzador per augmentar el comptador cada segon
-    this.time.addEvent({ delay: 1000, callback: updateTimer, callbackScope: this, loop: true });
-
-    // Temporitzador per generar una nova rafega cada segon
-    this.time.addEvent({ delay: 1000, callback: spawnWind, callbackScope: this, loop: true });
-
-    //BArres (altitud i equilibri)
+    // Barres d'estat
     timeBar = this.add.graphics();
-    updateTimeBar();  // Dibuixar-la inicialment
     balanceBar = this.add.graphics();
+    updateTimeBar();
     updateBalanceBar();
 
-    // Botó de pausa dins del joc
+    // Temporitzadors
+    this.time.addEvent({ delay: 1000, callback: updateTimer, callbackScope: this, loop: true });
+    this.time.addEvent({ delay: 1000, callback: spawnWind, callbackScope: this, loop: true });
+
+    // Botó de pausa (clic)
     pauseButtonPhaser = this.add.text(16, 16, '⏸️ Pausa', {
         fontSize: '20px',
         fill: '#000',
         backgroundColor: '#ffcc00',
         padding: { x: 10, y: 5 }
     }).setInteractive();
+    pauseButtonPhaser.on('pointerdown', () => togglePause(this));
 
-    pauseButtonPhaser.on('pointerdown', () => {
-        togglePause(this);
-    });
-    // Detecció de la tecla ESC
-    this.input.keyboard.on('keydown-ESC', () => {
-        togglePause(this);
-    });
-
-
+    // Pausa amb tecla ESC
+    this.input.keyboard.on('keydown-ESC', () => togglePause(this));
 }
+
 function update() {
     if (gameOver || isPaused) {
         return;
     }
 
     player.setVelocityX(0);
-    if (cursors.left.isDown) player.setVelocityX(-300);
-    else if (cursors.right.isDown) player.setVelocityX(300);
+    if (cursors.left.isDown || keys.left.isDown) {
+    player.setVelocityX(-300);
+    } else if (cursors.right.isDown || keys.right.isDown) {
+    player.setVelocityX(300);
+    }
 
     windGroup.getChildren().forEach(wind => {
         if (wind.y < -wind.displayHeight) wind.destroy();
