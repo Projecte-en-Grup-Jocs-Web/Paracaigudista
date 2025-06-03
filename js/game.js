@@ -119,38 +119,11 @@ function create() {
     }).setInteractive();
 
     pauseButtonPhaser.on('pointerdown', () => {
-    if (!isPaused) {
-        isPaused = true;
-        // Poso velocitat 0 a totes les rafegades i guardo la seva velocitat original
-        windGroup.getChildren().forEach(wind => {
-            wind.originalVelocityY = wind.body.velocity.y;  // guardo velocitat
-            wind.setVelocityY(0); // aturo moviment
-        });
-        showPauseMenu(this);
-    }
+        togglePause(this);
     });
     // Detecció de la tecla ESC
     this.input.keyboard.on('keydown-ESC', () => {
-    if (gameOver) return;
-
-    if (!isPaused) {
-        isPaused = true;
-        windGroup.getChildren().forEach(wind => {
-            wind.originalVelocityY = wind.body.velocity.y;
-            wind.setVelocityY(0);
-        });
-        showPauseMenu(this);
-    } else {
-        // Si ja estava pausat, el reprenem
-        windGroup.getChildren().forEach(wind => {
-            if (wind.originalVelocityY !== undefined) {
-                wind.setVelocityY(wind.originalVelocityY);
-                delete wind.originalVelocityY;
-            }
-        });
-        destroyPauseMenu();
-        isPaused = false;
-    }
+        togglePause(this);
     });
 
 
@@ -270,6 +243,28 @@ function showPauseMenu(scene) {
     exitButton.on('pointerdown', () => {
         window.location.href = "index.html";
     });
+}
+
+function togglePause(scene) {
+    if (gameOver) return;
+
+    if (!isPaused) {
+        isPaused = true;
+        windGroup.getChildren().forEach(wind => {
+            wind.originalVelocityY = wind.body.velocity.y;
+            wind.setVelocityY(0);
+        });
+        showPauseMenu(scene);
+    } else {
+        windGroup.getChildren().forEach(wind => {
+            if (wind.originalVelocityY !== undefined) {
+                wind.setVelocityY(wind.originalVelocityY);
+                delete wind.originalVelocityY;
+            }
+        });
+        destroyPauseMenu();
+        isPaused = false;
+    }
 }
 
 function destroyPauseMenu() {
