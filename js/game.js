@@ -58,7 +58,7 @@ let keys;       //tecles a/d
 
 let hitText;     // text de la barra d'equilibri
 let timerText;   // text del temporitzador
-let gameTime = 0;
+let gameTime = 0;  
 
 
 
