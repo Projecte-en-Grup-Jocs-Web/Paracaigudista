@@ -1,13 +1,44 @@
 body {
   font-family: Arial, sans-serif;
-  background: #eee;
+  background: linear-gradient(to bottom, #dfe9f3, #ffffff);
   text-align: center;
   padding-top: 50px;
+  margin: 0;
 }
 
 #opcions {
   background: white;
-  padding: 20px; 
-  border-radius: 10px;
-  display: inline-block;
+  padding: 30px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px; /* Espai vertical entre elements */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#opcions label,
+#opcions select,
+#opcions button {
+  font-size: 16px;
+}
+
+#opcions select {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#opcions button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #4285f4;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#opcions button:hover {
+  background-color: #3367d6;
 }
