@@ -94,29 +94,25 @@ function startGame() {
 function preload() {
 
     // Jugador: cercle verd
-    this.graphics = this.add.graphics();
-    this.graphics.fillStyle(0x00ff00, 1);
-    this.graphics.fillCircle(20, 20, 20); // cercle radi 20
-    this.graphics.generateTexture('player', 40, 40);
-    this.graphics.clear();
+    this.load.image('player', 'Resources/Personatge.png');
 
-    // Ràfaga de vent: rectangle gris
-    this.graphics.fillStyle(0x888888, 1);
-    this.graphics.fillRect(0, 0, 40, 20); // rectangle 40x20
-    this.graphics.generateTexture('wind', 40, 20);
-    this.graphics.clear();
+    this.load.image('wind', 'Resources/Nuvol.png');
 
 
     //icones de les barres
     this.load.image('equilibri', 'Resources/CaigudaLliure.png');
     this.load.image('paracaigudes', 'Resources/Paracaigudes.png');
+
+
 }
 
 //creem els elemens del preload
 function create() {
     // jugador
     player = this.physics.add.sprite(config.width / 2, 100, 'player');
+    player.setScale(0.1);
     player.setCollideWorldBounds(true);
+
 
     // Tecles: fletxes + A/D
     cursors = this.input.keyboard.createCursorKeys();
@@ -192,6 +188,7 @@ function spawnWind() {
     let x = Phaser.Math.Between(50, config.width - 50);
     let wind = windGroup.create(x, config.height + 20, 'wind');
     wind.setVelocityY(-Phaser.Math.Between(100*MultiDif, 300*MultiDif));
+    wind.setScale(0.1);
 }
 
 //actualitzador timer
