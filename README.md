@@ -1,12 +1,12 @@
 # Paracaigudista
 Marti Ferrer, Alex Cantos, David Clavaguera
 
-I . Introducció
+**I . Introducció**
 
 Free Fall és un joc de supervivència en 2D desenvolupat amb el motor de jocs web Phaser, on el jugador controla un paracaigudista en caiguda lliure. L'objectiu és mantenir l'equilibri evitant les ràfagues de vent, durant un temps determinat fins a desplegar exitosament el paracaigudes.
 El joc presenta mecàniques simples que requereix reflexos i concentració.
 
-II . Descripció del disseny del joc
+**II . Descripció del disseny del joc**
 
 Mecànica principal
 
@@ -28,7 +28,7 @@ Principiant: 30s, 4 vides, velocitat reduïda (0.7x), més temps entre obstacles
 Professional: 60s, 3 vides, velocitat normal, spawn normal
 Expert: 120s, 2 vides, velocitat augmentada (1.5x), menys temps entre obstacles
 
-III . Descripció de les parts més rellevants de la implementació
+**III . Descripció de les parts més rellevants de la implementació**
 
 Variables globals: Control de hits, temps transcorregut, estat de pausa
 Bucle principal: Funció update() que gestiona moviment del jugador i neteja d'obstacles
@@ -40,7 +40,7 @@ Barra de temps: Representa l'altitud restant (blau)
 Barra d'equilibri: Mostra els hits restants (vermell)
 Actualització dinàmica amb Graphics de Phaser
 
-IV. Conclusions i problemes trobats
+**IV. Conclusions i problemes trobats**
 
 Què funciona bé
 
@@ -58,7 +58,7 @@ Millores possibles
 Afegir sons i música
 Crear un sistema de upgrades
 
-V. Manual d’usuari
+**V. Manual d’usuari**
 
 Menú principal:
 
