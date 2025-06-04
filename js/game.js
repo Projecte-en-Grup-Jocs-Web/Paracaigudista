@@ -41,10 +41,10 @@ switch (opcionsGuardades.difficulty) {
 }
 
 let player;      // jugador
-let cursors;     // tecles
-let windGroup;   // grup d'obstacles (rafegades de vent)
+let cursors;     // tecles <- / ->
+let windGroup;   // grup d'obstacles
 let hits = 0;    // impactes acumulats
-let keys;
+let keys;       //tecles a/d
 
 
 
@@ -60,13 +60,17 @@ let isPaused = false;
 let pauseOverlay;
 let resumeButton;
 let exitButton;
+
+
 //variables barra temps
-let timeBar;         // Gràfic de la barra
-let timeBarHeight = 300;  // Alçada inicial de la barra
+let timeBar;         
+let timeBarHeight = 300;  
 let timeBarMaxHeight = 300;
-let timeBarX = config.width - 60; // A la dreta
+let timeBarX = config.width - 60; 
 let timeBarY = config.height - 350;
 let pauseButtonPhaser;
+
+
 //variables barra equilibri
 let balanceBar;
 let balanceBarHeight = 150;
@@ -74,13 +78,12 @@ let balanceBarMaxHeight = 150;
 let balanceBarX = config.width - 60;
 let balanceBarY = config.height - 350 - balanceBarHeight - 10;
 
-// Aquesta funció es crida quan es fa clic al botó "Iniciar joc"
+// Iniciar Joc 
 function startGame() {
     new Phaser.Game(config);
 }
 
 function preload() {
-    // Crear textures placeholders mitjançant Graphics:
 
     // Jugador: cercle verd
     this.graphics = this.add.graphics();
@@ -89,20 +92,21 @@ function preload() {
     this.graphics.generateTexture('player', 40, 40);
     this.graphics.clear();
 
-    // Rafaga de vent: rectangle gris
+    // Ràfaga de vent: rectangle gris
     this.graphics.fillStyle(0x888888, 1);
     this.graphics.fillRect(0, 0, 40, 20); // rectangle 40x20
     this.graphics.generateTexture('wind', 40, 20);
     this.graphics.clear();
 
 
-    //imatges
+    //icones de les barres
     this.load.image('equilibri', 'Resources/CaigudaLliure.png');
     this.load.image('paracaigudes', 'Resources/Paracaigudes.png');
 }
 
+//creem els elemens del preload
 function create() {
-    // Crear jugador
+    // jugador
     player = this.physics.add.sprite(config.width / 2, 100, 'player');
     player.setCollideWorldBounds(true);
 
@@ -113,7 +117,7 @@ function create() {
         right: Phaser.Input.Keyboard.KeyCodes.D
     });
 
-    // Grup d'obstacles (rafegues de vent)
+    // Grup d'obstacles o ràfagues
     windGroup = this.physics.add.group();
 
     // Col·lisió entre jugador i obstacles
@@ -129,7 +133,7 @@ function create() {
     this.time.addEvent({ delay: 1000, callback: updateTimer, callbackScope: this, loop: true });
     this.time.addEvent({ delay: 1000, callback: spawnWind, callbackScope: this, loop: true });
 
-    // Botó de pausa (clic)
+    // Botó de pausa
     pauseButtonPhaser = this.add.text(16, 16, '⏸️ Pausa', {
         fontSize: '20px',
         fill: '#000',
@@ -138,10 +142,11 @@ function create() {
     }).setInteractive();
     pauseButtonPhaser.on('pointerdown', () => togglePause(this));
 
-    // Pausa amb tecla ESC
+    // Pausa amb ESC
     this.input.keyboard.on('keydown-ESC', () => togglePause(this));
 }
 
+//actualitzacio estat
 function update() {
     if (gameOver || isPaused) {
         return;
@@ -162,6 +167,7 @@ function update() {
     this.add.image(config.width-80, config.height-80, 'paracaigudes').setScale(0.025);
 }
 
+//funcio gestió de xoc
 function hitWind(player, wind) {
     wind.destroy();
     hits++;
@@ -171,6 +177,7 @@ function hitWind(player, wind) {
     }
 }
 
+//spawneig del vent
 function spawnWind() {
     if (gameOver || isPaused) return; // No spawnejis si pausa o fi
 
@@ -178,6 +185,8 @@ function spawnWind() {
     let wind = windGroup.create(x, config.height + 20, 'wind');
     wind.setVelocityY(-Phaser.Math.Between(150, 250));
 }
+
+//actualitzador timer
 
 function updateTimer() {
     if (gameOver || isPaused) return; // No actualitzis si pausa o fi
@@ -190,6 +199,7 @@ function updateTimer() {
     }
 }
 //funcions d'actualitzacions de barres
+//equilibri
 function updateBalanceBar() {
     const remainingRatio = Math.max(0, (maxHits - hits) / maxHits);
     const currentHeight = remainingRatio * balanceBarMaxHeight;
@@ -200,7 +210,7 @@ function updateBalanceBar() {
     balanceBar.lineStyle(2, 0x000000);
     balanceBar.strokeRect(balanceBarX, balanceBarY, 20, balanceBarMaxHeight);
 }
-
+//temps restant/altitud
 function updateTimeBar() {
     const remainingRatio = Math.max(0, (winTime - gameTime) / winTime);
     const currentHeight = remainingRatio * timeBarMaxHeight;
@@ -212,6 +222,7 @@ function updateTimeBar() {
     timeBar.strokeRect(timeBarX, timeBarY, 20, timeBarMaxHeight);
 }
 
+//missatge pausa
 function showPauseMessage(scene) {
     const pauseText = scene.add.text(config.width / 2, config.height / 2, 'Joc en pausa\nFes clic per continuar', {
         fontSize: '32px',
@@ -228,6 +239,7 @@ function showPauseMessage(scene) {
     });
 }
 
+//Menu de pausa
 function showPauseMenu(scene) {
     pauseOverlay = scene.add.rectangle(config.width / 2, config.height / 2, config.width, config.height, 0x000000, 0.5).setDepth(1);
 
@@ -283,13 +295,14 @@ function togglePause(scene) {
         isPaused = false;
     }
 }
-
+//Destruim elements de pausa
 function destroyPauseMenu() {
     pauseOverlay.destroy();
     resumeButton.destroy();
     exitButton.destroy();
 }
 
+//gestio fi
 function endGame(won, scene) {
     gameOver = true;
     const message = won ? 'Has desplegat el paracaigudes exitosament!' : 'Has perdut l\'equilibri!';
