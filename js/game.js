@@ -19,8 +19,10 @@ const config = {
 
 
 
-let winTime =60;
+let winTime = 60;
 let maxHits = 3;
+let MultiDif = 1.0;
+let spawnRateDif = 1.0;
 
 let opcionsGuardades = JSON.parse(localStorage.getItem('opcions')) || { difficulty: 'normal' };
 
@@ -28,15 +30,21 @@ switch (opcionsGuardades.difficulty) {
   case 'easy':
     winTime = 30;
     maxHits = 4;
+    MultiDif = 0.7;
+    spawnRateDif = 1.3;
     break;
   case 'hard':
     winTime = 120;
     maxHits = 2;
+    MultiDif = 1.5;
+    spawnRateDif = 0.5;
     break;
   case 'normal':
   default:
     winTime = 60;
     maxHits = 3;
+    MultiDif = 1.0;
+    spawnRateDif = 1.0;
     break;
 }
 
@@ -131,10 +139,10 @@ function create() {
 
     // Temporitzadors
     this.time.addEvent({ delay: 1000, callback: updateTimer, callbackScope: this, loop: true });
-    this.time.addEvent({ delay: 1000, callback: spawnWind, callbackScope: this, loop: true });
+    this.time.addEvent({ delay: 1000*spawnRateDif, callback: spawnWind, callbackScope: this, loop: true });
 
     // Botó de pausa
-    pauseButtonPhaser = this.add.text(16, 16, '⏸️ Pausa', {
+    pauseButtonPhaser = this.add.text(16, 16, 'Pausa', {
         fontSize: '20px',
         fill: '#000',
         backgroundColor: '#ffcc00',
@@ -183,7 +191,7 @@ function spawnWind() {
 
     let x = Phaser.Math.Between(50, config.width - 50);
     let wind = windGroup.create(x, config.height + 20, 'wind');
-    wind.setVelocityY(-Phaser.Math.Between(150, 250));
+    wind.setVelocityY(-Phaser.Math.Between(100*MultiDif, 300*MultiDif));
 }
 
 //actualitzador timer
@@ -243,7 +251,7 @@ function showPauseMessage(scene) {
 function showPauseMenu(scene) {
     pauseOverlay = scene.add.rectangle(config.width / 2, config.height / 2, config.width, config.height, 0x000000, 0.5).setDepth(1);
 
-    resumeButton = scene.add.text(config.width / 2, config.height / 2 - 30, '▶️ Reprendre', {
+    resumeButton = scene.add.text(config.width / 2, config.height / 2 - 30, 'Continuar', {
         fontSize: '32px',
         fill: '#ffffff',
         backgroundColor: '#00aa00',
@@ -262,7 +270,7 @@ function showPauseMenu(scene) {
     isPaused = false;
     });
 
-    exitButton = scene.add.text(config.width / 2, config.height / 2 + 30, '🔁 Sortir', {
+    exitButton = scene.add.text(config.width / 2, config.height / 2 + 30, 'Sortir', {
         fontSize: '32px',
         fill: '#ffffff',
         backgroundColor: '#aa0000',
