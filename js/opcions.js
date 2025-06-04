@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  //dificultat estandar si localStorage vuit
+  //dificultat estandar si localStorage buit
   const defaultOpcions = {
     difficulty: 'normal'
   };
@@ -13,7 +13,7 @@ $(document).ready(function () {
   $difficulty.on('change', function () {
     opcions.difficulty = $difficulty.val();
   });
-  //actualitzem loaclStorage
+  //actualitzem loacalStorage
   $('#apply').on('click', function () {
     localStorage.setItem('opcions', JSON.stringify(opcions));
     location.href = "../index.html";
